@@ -1,0 +1,8 @@
+---
+- name: "Run for RedHat"
+  import_tasks: "RedHat.yml"
+  when: ansible_os_family == "RedHat"
+
+- name: "Run for Debian"
+  import_tasks: "Debian.yml"
+  when: ansible_os_family == "Debian"

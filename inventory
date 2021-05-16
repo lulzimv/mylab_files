@@ -1,3 +1,6 @@
-#192.168.0.16 # apache_package=httpd php_package=php
-#192.168.0.17 # apache_package=apache2 php_package=libapache2-mod-php
-192.168.0.18
+[web_server]
+192.168.0.16  #apache_package=httpd php_package=php
+192.168.0.17  #apache_package=apache2 php_package=libapache2-mod-php
+#192.168.0.18
+[db_server]
+192.168.0.20

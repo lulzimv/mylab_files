@@ -1,0 +1,57 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: Install updates (CentOS)
+    dnf:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution in ["RedHat", "CentOS"]
+
+  - name: Install update (Ubuntu)
+    apt:
+      upgrade: dist
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+
+- hosts: web_server
+  become: true
+  tasks:
+
+  - name: Install apache2 and php package for Ubuntu
+    apt:
+      name: 
+        - apache2
+        - libapache2-mod-php
+        - vsftpd
+      state: latest
+    when: ansible_distribution == "Ubuntu"
+
+
+  - name: Install httpd and php package for CentOS
+    dnf:
+      name: 
+        - httpd
+        - php
+      state: latest
+    when: ansible_distribution == "CentOS"
+
+- hosts: db_server
+  become: true
+  tasks:
+
+  - name: Install mariadb package ( Ubuntu )
+    apt:
+      name: mariadb-server
+      state: latest
+    when: ansible_distribution == "Ubuntu"
+
+# Samba packet is the same for CentOS and Ubuntu, that's why we will use package !!
+    # - hosts: file_server
+    #package:
+    #name: samba
+    #state: latest
+  

@@ -35,7 +35,7 @@
       owner: root
       group: root
 
-- hosts: web_server
+- hosts: web_servers
   become: true
   tasks:
 
@@ -49,7 +49,6 @@
       state: latest
     when: ansible_distribution == "Ubuntu"
 
-
   - name: Install httpd and php package for CentOS
     tags: apache,httpd,centos
     dnf:
@@ -57,7 +56,7 @@
         - httpd
         - php
       state: latest
-    when: ansible_distribution == "CentOS"
+    when: ansible_distribution in ["RedHat", "CentOS"]
 
   - name: copy default html file for site
     tags: apache,apache2,httpd
@@ -68,7 +67,31 @@
       group: root
       mode: 0644
 
-- hosts: db_server
+  - name: start httpd ( CentOS)
+    tags: apache,centos,httpd
+    service:
+      name: httpd
+      state: started
+      enabled: yes
+    when: ansible_distribution in ["RedHat", "CentOS"]
+
+  - name: change e-mail address for admin
+    tags: apache,centos,httpd
+    lineinfile:
+      path: /etc/httpd/conf/httpd.conf
+      regexp: '^ServerAdmin'
+      line: ServerAdmin myemail@somewhere.net
+    when: ansible_distribution in ["RedHat", "CentOS"]
+    register: httpd
+
+  - name: restart httpd (CentOS)
+    tags: apache,centos,httpd
+    service:
+      name: httpd
+      state: restarted
+    when: httpd.changed
+
+- hosts: db_servers
   become: true
   tasks:
 

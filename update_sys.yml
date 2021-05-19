@@ -1,18 +1,20 @@
 ---
 
-- hosts: all
+- hosts: bacula
   become: true
   tasks:
 
-  - name: Update repository index
+  - name: Install update (Ubuntu)
+    tags: always
     apt:
+      upgrade: dist
       update_cache: yes
-    when: ansible_distribution in ["Debian", "Ubuntu"]
+    when: ansible_distribution == "Ubuntu"
 
-
-    #  - name: Update repository index
-    #    dnf:
-    #      update_cache: yes
-    #    when: ansible_distribution == "CentOS"
-
+  - name: Install updates (CentOS)
+    tags: always
+    dnf:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution in ["RedHat", "CentOS"]
 
